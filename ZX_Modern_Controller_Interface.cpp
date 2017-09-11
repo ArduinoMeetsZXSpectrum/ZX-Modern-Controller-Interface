@@ -1,21 +1,32 @@
+/*
+ * ZX_Modern_Controller_Interface.cpp
+ *
+ *  Created on: 11. 9. 2017
+ *      Author: aluchava
+ */
+
 #include "ZX_Modern_Controller_Interface.h"
 
-// sinclair
+// mappings O, P, Q, A, SPACE;
+KeyboardMapping keyboardMapping1 = KeyboardMapping(20, 4, 18, 19, 44);
+JoystickMapping joystickMapping = JoystickMapping(DPADEnum::DPAD_UP, DPADEnum::DPAD_UP_RIGHT, DPADEnum::DPAD_RIGHT, DPADEnum::DPAD_RIGHT_DOWN,
+		DPADEnum::DPAD_DOWN, DPADEnum::DPAD_DOWN_LEFT, DPADEnum::DPAD_LEFT, DPADEnum::DPAD_LEFT_UP, ButtonsEnum::BUTTON_1);
+
+// sinclair connector digital pins;
 uint8_t upPin1 = 11;
 uint8_t downPin1 = 10;
 uint8_t leftPin1 = 9;
 uint8_t rightPin1 = 8;
 uint8_t fire1Pin1 = 7;
-KeyboardMapping keyboardMapping1 = KeyboardMapping(20, 4, 18, 19, 44);
-JoystickConnector connector1 = JoystickConnector(upPin1, downPin1, leftPin1, rightPin1, fire1Pin1, &keyboardMapping1);
+JoystickConnector connector1 = JoystickConnector(upPin1, downPin1, leftPin1, rightPin1, fire1Pin1, &keyboardMapping1, &joystickMapping);
 
-// kempston;
+// kempston connector digital pins;
 uint8_t upPin2 = 6;
 uint8_t downPin2 = 5;
 uint8_t leftPin2 = 4;
 uint8_t rightPin2 = 12;
 uint8_t fire1Pin2 = 13;
-JoystickConnector connector2 = JoystickConnector(upPin2, downPin2, leftPin2, rightPin2, fire1Pin2, &keyboardMapping1);
+JoystickConnector connector2 = JoystickConnector(upPin2, downPin2, leftPin2, rightPin2, fire1Pin2, &keyboardMapping1, &joystickMapping);
 
 // LED
 uint8_t ledRedPin = 2;
@@ -26,15 +37,11 @@ USBHub hub = USBHub(&usb);
 
 // keyboard;
 HIDBoot<USB_HID_PROTOCOL_KEYBOARD> hidKeyboard = HIDBoot<USB_HID_PROTOCOL_KEYBOARD>(&usb);
-
-// gamepads;
-LogitechDualAction logitechDualAction = LogitechDualAction(&usb);
-
-
-JoystickEvents JoyEvents = JoystickEvents();
-JoystickReportParserImpl Joy = JoystickReportParserImpl(&JoyEvents);
-
 KeyboardReportParserImpl keyboardListener = KeyboardReportParserImpl(&connector1, &connector2);
+
+// gamepad;
+UniversalJoystick hidJoystick = UniversalJoystick(&usb);
+JoystickListener joystickListener = JoystickListener(&connector1, &connector2);
 
 //The setup function is called once at startup of the sketch
 void setup()
@@ -86,22 +93,11 @@ void setup()
 	delay(200);
 
 	hidKeyboard.SetReportParser(0, &keyboardListener);
-
-	/*
-	if (!logitechDualAction.SetReportParser(0, &Joy))
-	{
-		ErrorMessage<uint8_t>(PSTR("SetReportParser"), 1);
-	}
-	*/
+	hidJoystick.setListener(&joystickListener);
 }
 
 // The loop function is called in an endless loop
 void loop()
 {
 	usb.Task();
-
-	if (logitechDualAction.connected())
-	{
-
-	}
 }

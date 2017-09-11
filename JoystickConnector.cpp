@@ -8,7 +8,7 @@
 #include "JoystickConnector.h"
 
 JoystickConnector::JoystickConnector(uint8_t upPin, uint8_t downPin, uint8_t leftPin, uint8_t rightPin, uint8_t fire1Pin,
-		KeyboardMapping *keyboardMapping)
+		KeyboardMapping *keyboardMapping, JoystickMapping *joystickMapping)
 {
 	this->upPin = upPin;
 	this->downPin = downPin;
@@ -16,6 +16,7 @@ JoystickConnector::JoystickConnector(uint8_t upPin, uint8_t downPin, uint8_t lef
 	this->rightPin = rightPin;
 	this->fire1Pin = fire1Pin;
 	this->keyboardMapping = keyboardMapping;
+	this->joystickMapping = joystickMapping;
 }
 
 JoystickConnector::~JoystickConnector()
@@ -50,4 +51,9 @@ uint8_t JoystickConnector::getFire1Pin()
 KeyboardMapping *JoystickConnector::getKeyboardMapping()
 {
 	return keyboardMapping;
+}
+
+JoystickMapping *JoystickConnector::getJoystickMapping()
+{
+	return joystickMapping;
 }
