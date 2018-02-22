@@ -13,11 +13,14 @@
 #include <hidboot.h>
 #include <hiduniversal.h>
 
+#include "Keys.h"
 #include "JoystickConnector.h"
 #include "JoystickListener.h"
 #include "JoystickMapping.h"
 #include "KeyboardMapping.h"
 #include "KeyboardReportParserImpl.h"
 #include "UniversalJoystick.h"
+#include "XBox360USBGamepad.h"
+#include "XBoxOneUSBGamepad.h"
 
 #endif /* _ZX_Modern_Controller_Interface_H_ */

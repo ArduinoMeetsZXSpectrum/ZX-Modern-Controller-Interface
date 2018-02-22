@@ -18,7 +18,7 @@ void LogitechDualActionDriver::ParseHIDData(USBHID *hid, bool is_rpt_id, uint8_t
 {
 	Serial.println("LogitechDualActionDriver::ParseHIDData");
 	//PrintHex<uint8_t>(buf[4], 0x80);
-	//PrintHex<uint8_t>(buf[5], 0x80);
+	PrintHex<uint8_t>(buf[5], 0x80);
 	//Serial.println("...");
 
 	uint8_t dpad = (buf[4] & 0xF);

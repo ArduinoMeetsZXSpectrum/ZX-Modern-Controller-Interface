@@ -21,6 +21,7 @@ class KeyboardReportParserImpl: public KeyboardReportParser
 		void OnControlKeysChanged(uint8_t before, uint8_t after);
 		void OnKeyDown(uint8_t mod, uint8_t key);
 		void OnKeyUp(uint8_t mod, uint8_t key);
+		uint8_t OemToVirtualKeyCode(uint8_t key);
 
 	public:
 		KeyboardReportParserImpl(JoystickConnector *connector1, JoystickConnector *connector2);
