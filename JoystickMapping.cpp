@@ -8,7 +8,7 @@
 #include "JoystickMapping.h"
 
 JoystickMapping::JoystickMapping(uint8_t up, uint8_t upRight, uint8_t right, uint8_t rightDown, uint8_t down,
-		uint8_t downLeft, uint8_t left, uint8_t leftUp, uint8_t fire1)
+		uint8_t downLeft, uint8_t left, uint8_t leftUp, uint8_t fire1, uint8_t autoFire1)
 {
 	this->up = up;
 	this->upRight = upRight;
@@ -19,6 +19,7 @@ JoystickMapping::JoystickMapping(uint8_t up, uint8_t upRight, uint8_t right, uin
 	this->left = left;
 	this->leftUp = leftUp;
 	this->fire1 = fire1;
+	this->autoFire1 = autoFire1;
 }
 
 JoystickMapping::~JoystickMapping()
@@ -68,4 +69,9 @@ uint8_t JoystickMapping::getLeftUp()
 uint8_t JoystickMapping::getFire1()
 {
 	return fire1;
+}
+
+uint8_t JoystickMapping::getAutoFire1()
+{
+	return autoFire1;
 }

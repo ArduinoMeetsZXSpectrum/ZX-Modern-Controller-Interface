@@ -10,36 +10,11 @@
 
 #include <hiduniversal.h>
 #include "JoystickConnector.h"
+#include "AutoFire.h"
 
 struct GamePadEventData
 {
-		uint8_t X, Y, Z1, Z2, Rz;
-};
-
-enum DPADEnum
-{
-	DPAD_UP = 0x0,
-	DPAD_UP_RIGHT = 0x1,
-	DPAD_RIGHT = 0x2,
-	DPAD_RIGHT_DOWN = 0x3,
-	DPAD_DOWN = 0x4,
-	DPAD_DOWN_LEFT = 0x5,
-	DPAD_LEFT = 0x6,
-	DPAD_LEFT_UP = 0x7
-};
-
-enum ButtonsEnum
-{
-	BUTTON_1 = 0x1,
-	BUTTON_2 = 0x2,
-	BUTTON_3 = 0x3,
-	BUTTON_4 = 0x4,
-	BUTTON_5 = 0x5,
-	BUTTON_6 = 0x6,
-	BUTTON_7 = 0x7,
-	BUTTON_8 = 0x8,
-	BUTTON_9 = 0x9,
-	BUTTON_10 = 0x10
+	uint8_t X, Y, Z1, Z2, Rz;
 };
 
 class JoystickListener
@@ -47,6 +22,10 @@ class JoystickListener
 	private:
 		JoystickConnector *connector1;
 		JoystickConnector *connector2;
+		AutoFire *autoFire1;
+		AutoFire *autoFire2;
+		bool con1Fire1Pressed = false;
+		bool con2Fire1Pressed = false;
 
 	public:
 		JoystickListener(JoystickConnector *connector1, JoystickConnector *connector2);
@@ -57,6 +36,12 @@ class JoystickListener
 		virtual void onDPadUp(uint8_t dpad);
 		virtual void onButtonDown(uint8_t button);
 		virtual void onButtonUp(uint8_t button);
+
+		void Update();
+		static void OnAutoFire1(void *context);
+		static void OnAutoFire2(void *context);
+		void ProcessAutoFire1();
+		void ProcessAutoFire2();
 };
 
 #endif /* JoystickListener_H_ */

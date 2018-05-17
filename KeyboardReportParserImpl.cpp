@@ -11,11 +11,21 @@ KeyboardReportParserImpl::KeyboardReportParserImpl(JoystickConnector *connector1
 {
 	this->connector1 = connector1;
 	this->connector2 = connector2;
+
+	// init autoFire;
+	autoFire1 = new AutoFire(&KeyboardReportParserImpl::OnAutoFire1, this);
+	autoFire2 = new AutoFire(&KeyboardReportParserImpl::OnAutoFire2, this);
 }
 
 KeyboardReportParserImpl::~KeyboardReportParserImpl()
 {
 }
+
+//------------------------------------------------------------
+//
+// Methods: KeyboardReportParser
+//
+//------------------------------------------------------------
 
 void KeyboardReportParserImpl::OnControlKeysChanged(uint8_t before, uint8_t after)
 {
@@ -36,64 +46,80 @@ void KeyboardReportParserImpl::OnKeyDown(uint8_t mod, uint8_t key)
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyUp())
 	{
-		Serial.println("connector1 up down");
+		Serial.println("connector1 up pressed");
 		digitalWrite(this->connector1->getUpPin(), HIGH);
 	}
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyDown())
 	{
-		Serial.println("connector1 down down");
+		Serial.println("connector1 down pressed");
 		digitalWrite(this->connector1->getDownPin(), HIGH);
 	}
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyLeft())
 	{
-		Serial.println("connector1 left down");
+		Serial.println("connector1 left pressed");
 		digitalWrite(this->connector1->getLeftPin(), HIGH);
 	}
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyRight())
 	{
-		Serial.println("connector1 right down");
+		Serial.println("connector1 right pressed");
 		digitalWrite(this->connector1->getRightPin(), HIGH);
 	}
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyFire1())
 	{
-		Serial.println("connector1 fire1 down");
+		Serial.println("connector1 fire1 pressed");
 		digitalWrite(this->connector1->getFire1Pin(), HIGH);
+		con1Fire1Pressed = true;
+	}
+
+	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyAutoFire1())
+	{
+		Serial.println("connector1 autoFire1 pressed");
+		digitalWrite(this->connector1->getFire1Pin(), HIGH);
+		autoFire1->Start();
 	}
 
 	// connector2;
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyUp())
 	{
-		Serial.println("connector2 up down");
+		Serial.println("connector2 up pressed");
 		digitalWrite(this->connector2->getUpPin(), HIGH);
 	}
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyDown())
 	{
-		Serial.println("connector2 down down");
+		Serial.println("connector2 down pressed");
 		digitalWrite(this->connector2->getDownPin(), HIGH);
 	}
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyLeft())
 	{
-		Serial.println("connector2 left down");
+		Serial.println("connector2 left pressed");
 		digitalWrite(this->connector2->getLeftPin(), HIGH);
 	}
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyRight())
 	{
-		Serial.println("connector2 right down");
+		Serial.println("connector2 right pressed");
 		digitalWrite(this->connector2->getRightPin(), HIGH);
 	}
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyFire1())
 	{
-		Serial.println("connector2 fire1 down");
+		Serial.println("connector2 fire1 pressed");
 		digitalWrite(this->connector2->getFire1Pin(), HIGH);
+		con2Fire1Pressed = true;
+	}
+
+	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyAutoFire1())
+	{
+		Serial.println("connector2 autoFire1 pressed");
+		digitalWrite(this->connector2->getFire1Pin(), HIGH);
+		autoFire2->Start();
 	}
 }
 
@@ -105,66 +131,92 @@ void KeyboardReportParserImpl::OnKeyUp(uint8_t mod, uint8_t key)
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyUp())
 	{
-		Serial.println("connector1 up up");
+		Serial.println("connector1 up released");
 		digitalWrite(this->connector1->getUpPin(), LOW);
 	}
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyDown())
 	{
-		Serial.println("connector1 down up");
+		Serial.println("connector1 down released");
 		digitalWrite(this->connector1->getDownPin(), LOW);
 	}
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyLeft())
 	{
-		Serial.println("connector1 left up");
+		Serial.println("connector1 left released");
 		digitalWrite(this->connector1->getLeftPin(), LOW);
 	}
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyRight())
 	{
-		Serial.println("connector1 right up");
+		Serial.println("connector1 right released");
 		digitalWrite(this->connector1->getRightPin(), LOW);
 	}
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyFire1())
 	{
-		Serial.println("connector1 fire1 up");
-		digitalWrite(this->connector1->getFire1Pin(), LOW);
+		Serial.println("connector1 fire1 released");
+		con1Fire1Pressed = false;
+		if(!autoFire1->getState())
+			digitalWrite(this->connector1->getFire1Pin(), LOW);
+	}
+
+	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyAutoFire1())
+	{
+		Serial.println("connector1 autoFire1 released");
+		autoFire1->Stop();
+		if(!con1Fire1Pressed)
+			digitalWrite(this->connector1->getFire1Pin(), LOW);
 	}
 
 	// connector2;
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyUp())
 	{
-		Serial.println("connector2 up up");
+		Serial.println("connector2 up released");
 		digitalWrite(this->connector2->getUpPin(), LOW);
 	}
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyDown())
 	{
-		Serial.println("connector2 down up");
+		Serial.println("connector2 down released");
 		digitalWrite(this->connector2->getDownPin(), LOW);
 	}
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyLeft())
 	{
-		Serial.println("connector2 left up");
+		Serial.println("connector2 left released");
 		digitalWrite(this->connector2->getLeftPin(), LOW);
 	}
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyRight())
 	{
-		Serial.println("connector2 right up");
+		Serial.println("connector2 right released");
 		digitalWrite(this->connector2->getRightPin(), LOW);
 	}
 
 	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyFire1())
 	{
-		Serial.println("connector2 fire1 up");
-		digitalWrite(this->connector2->getFire1Pin(), LOW);
+		Serial.println("connector2 fire1 released");
+		con2Fire1Pressed = false;
+		if(!autoFire2->getState())
+			digitalWrite(this->connector2->getFire1Pin(), LOW);
+	}
+
+	if (virtualCode == this->connector2->getKeyboardMapping()->getKeyAutoFire1())
+	{
+		Serial.println("connector2 autoFire1 released");
+		autoFire2->Stop();
+		if(!con2Fire1Pressed)
+			digitalWrite(this->connector2->getFire1Pin(), LOW);
 	}
 }
+
+//------------------------------------------------------------
+//
+// Methods
+//
+//------------------------------------------------------------
 
 uint8_t KeyboardReportParserImpl::OemToVirtualKeyCode(uint8_t key)
 {
@@ -194,7 +246,7 @@ uint8_t KeyboardReportParserImpl::OemToVirtualKeyCode(uint8_t key)
 		// return (uint8_t) pgm_read_byte(&getPadKeys()[key - 0x54]);
 		return 0;
 	}
-	// functioanl keys
+	// functional keys
 
 	// cursor keys
 	else if (VALUE_WITHIN(key, 0x4F, 0x52))
@@ -230,5 +282,54 @@ uint8_t KeyboardReportParserImpl::OemToVirtualKeyCode(uint8_t key)
 		}
 	}
 	return 0;
+}
+
+void KeyboardReportParserImpl::Update()
+{
+	// tick autofire timers;
+	autoFire1->Update();
+	autoFire2->Update();
+}
+
+// static
+void KeyboardReportParserImpl::OnAutoFire1(void *context)
+{
+	KeyboardReportParserImpl *joystick = (KeyboardReportParserImpl *)context;
+	joystick->ProcessAutoFire1();
+}
+
+// static
+void KeyboardReportParserImpl::OnAutoFire2(void *context)
+{
+	KeyboardReportParserImpl *joystick = (KeyboardReportParserImpl *)context;
+	joystick->ProcessAutoFire2();
+}
+
+void KeyboardReportParserImpl::ProcessAutoFire1()
+{
+	if(autoFire1->getState())
+	{
+		Serial.println("connector 1 autofire1 cycle press");
+		digitalWrite(this->connector1->getFire1Pin(), HIGH);
+	}
+	else if (!con1Fire1Pressed)
+	{
+		Serial.println("connector 1 autofire1 cycle release");
+		digitalWrite(this->connector1->getFire1Pin(), LOW);
+	}
+}
+
+void KeyboardReportParserImpl::ProcessAutoFire2()
+{
+	if(autoFire2->getState())
+	{
+		Serial.println("connector 2 autofire1 cycle press");
+		digitalWrite(this->connector2->getFire1Pin(), HIGH);
+	}
+	else if(!con2Fire1Pressed)
+	{
+		Serial.println("connector 2 autofire1 cycle release");
+		digitalWrite(this->connector2->getFire1Pin(), LOW);
+	}
 }
 

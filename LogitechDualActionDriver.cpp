@@ -6,20 +6,33 @@
  */
 #include "LogitechDualActionDriver.h"
 
-LogitechDualActionDriver::LogitechDualActionDriver() : JoystickDriver(),  oldDpadShifted(0), oldStartButtons(0), oldFaceButtons(0), oldHatButtons(0)
+LogitechDualActionDriver::LogitechDualActionDriver() : JoystickDriver(),
+	oldDpadShifted(0), oldStartButtons(0), oldFaceButtons(0), oldHatButtons(0), oldAnalog(0)
 {
+	zxAnalog[0] = ZX_DPAD_Enum::DPAD_LEFT;
+	zxAnalog[1] = ZX_DPAD_Enum::DPAD_RIGHT;
+	zxAnalog[2] = ZX_DPAD_Enum::DPAD_UP;
+	zxAnalog[3] = ZX_DPAD_Enum::DPAD_DOWN;
 }
 
 LogitechDualActionDriver::~LogitechDualActionDriver()
 {
 }
 
+//------------------------------------------------------------
+//
+// Methods: JoystickDriver
+//
+//------------------------------------------------------------
+
 void LogitechDualActionDriver::ParseHIDData(USBHID *hid, bool is_rpt_id, uint8_t len, uint8_t *buf, JoystickListener* listener)
 {
+	/*
 	Serial.println("LogitechDualActionDriver::ParseHIDData");
-	//PrintHex<uint8_t>(buf[4], 0x80);
-	PrintHex<uint8_t>(buf[5], 0x80);
-	//Serial.println("...");
+	PrintHex<uint8_t>(buf[0], 0x80);
+	Serial.println(" < 0");
+	Serial.println("...");
+	*/
 
 	uint8_t dpad = (buf[4] & 0xF);
 	uint8_t faceButtons = (buf[4] & 0xF0) >> 4;
@@ -142,4 +155,64 @@ void LogitechDualActionDriver::ParseHIDData(USBHID *hid, bool is_rpt_id, uint8_t
 		oldDpadShifted = dpadShifted;
 	}
 
+	// left analog - dpad emulation;
+	// first analogValue = X;
+	// second analogValue = Y;
+	uint8_t offset = 0;
+	int const analogCenter = 0x7F;
+	int const analogSensitivity = 0x25;
+	for(int i = 0; i<=1; i++)
+	{
+		uint8_t analogValue = buf[i];
+		uint8_t mask0 = (0x1 << (i + offset));
+		uint8_t mask1 = (0x1 << (i + offset + 1));
+		ZX_DPAD_Enum zxDpadButton0 = zxAnalog[i + offset];
+		ZX_DPAD_Enum zxDpadButton1 = zxAnalog[i + offset + 1];
+		if(analogValue < (analogCenter - analogSensitivity))
+		{
+			// low;
+			if(!(oldAnalog & mask0))
+			{
+				// set;
+				oldAnalog |= mask0;
+				listener->onDPadDown(zxDpadButton0);
+			}
+		}
+		else if(analogValue > (analogCenter + analogSensitivity))
+		{
+			// high;
+			if(!(oldAnalog & mask1))
+			{
+				// set;
+				oldAnalog |= mask1;
+				listener->onDPadDown(zxDpadButton1);
+			}
+		}
+		else
+		{
+			// center;
+			if(oldAnalog & mask0)
+			{
+				// unset;
+				oldAnalog ^= mask0;
+				listener->onDPadUp(zxDpadButton0);
+			}
+			if(oldAnalog & mask1)
+			{
+				// unset;
+				oldAnalog ^= mask1;
+				listener->onDPadUp(zxDpadButton1);
+			}
+		}
+
+		// next pair;
+		offset += 1;
+	}
 }
+
+//------------------------------------------------------------
+//
+// Methods
+//
+//------------------------------------------------------------
+

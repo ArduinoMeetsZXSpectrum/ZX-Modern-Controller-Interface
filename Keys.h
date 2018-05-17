@@ -4,6 +4,10 @@
  *
  * Author: aluchava
  */
+
+#ifndef _ZX_Keys_Enum_H_
+#define _ZX_Keys_Enum_H_
+
 namespace ZX
 {
 	enum Keys
@@ -77,3 +81,5 @@ namespace ZX
 		F12 = 0x7B,
 	};
 };
+
+#endif /* _ZX_Keys_Enum_H_ */

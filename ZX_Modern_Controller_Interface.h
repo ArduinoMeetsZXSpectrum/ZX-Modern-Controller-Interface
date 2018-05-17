@@ -22,5 +22,7 @@
 #include "UniversalJoystick.h"
 #include "XBox360USBGamepad.h"
 #include "XBoxOneUSBGamepad.h"
+#include "ZX_BUTTON_Enum.h"
+#include "ZX_DPAD_Enum.h"
 
 #endif /* _ZX_Modern_Controller_Interface_H_ */

@@ -22,10 +22,11 @@ class JoystickMapping
 		uint8_t left;
 		uint8_t leftUp;
 		uint8_t fire1;
+		uint8_t autoFire1;
 
 	public:
 		JoystickMapping(uint8_t up, uint8_t upRight, uint8_t right, uint8_t rightDown, uint8_t down,
-				uint8_t downLeft, uint8_t left, uint8_t leftUp, uint8_t fire1);
+				uint8_t downLeft, uint8_t left, uint8_t leftUp, uint8_t fire1, uint8_t autoFire1);
 		virtual ~JoystickMapping();
 
 		uint8_t getUp();
@@ -37,6 +38,7 @@ class JoystickMapping
 		uint8_t getLeft();
 		uint8_t getLeftUp();
 		uint8_t getFire1();
+		uint8_t getAutoFire1();
 };
 
 #endif /* JOYSTICKMAPPING_H_ */

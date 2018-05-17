@@ -9,13 +9,19 @@
 #define LOGITECHDUALACTIONDRIVER_H_
 
 #include "JoystickDriver.h"
+#include "ZX_DPAD_Enum.h"
+
+using namespace ZX;
 
 class LogitechDualActionDriver : public JoystickDriver
 {
-	uint16_t oldDpadShifted;
-	uint8_t oldStartButtons;
-	uint8_t oldFaceButtons;
-	uint8_t oldHatButtons;
+	private:
+		uint16_t oldDpadShifted;
+		uint8_t oldStartButtons;
+		uint8_t oldFaceButtons;
+		uint8_t oldHatButtons;
+		uint8_t oldAnalog;			// [left,right,up,down,left,right,up,down]
+		ZX_DPAD_Enum zxAnalog[4];
 
 	public:
 		LogitechDualActionDriver();

@@ -11,11 +11,21 @@ JoystickListener::JoystickListener(JoystickConnector *connector1, JoystickConnec
 {
 	this->connector1 = connector1;
 	this->connector2 = connector2;
+
+	// init autoFire;
+	autoFire1 = new AutoFire(&JoystickListener::OnAutoFire1, this);
+	autoFire2 = new AutoFire(&JoystickListener::OnAutoFire2, this);
 }
 
 JoystickListener::~JoystickListener()
 {
 }
+
+//------------------------------------------------------------
+//
+// Methods
+//
+//------------------------------------------------------------
 
 void JoystickListener::onGamePadChanged(const GamePadEventData *evt)
 {
@@ -38,14 +48,34 @@ void JoystickListener::onButtonUp(uint8_t button)
 	if (button == this->connector1->getJoystickMapping()->getFire1())
 	{
 		Serial.println("connector1 fire1 released");
-		digitalWrite(this->connector1->getFire1Pin(), LOW);
+		con1Fire1Pressed = false;
+		if(!autoFire1->getState())
+			digitalWrite(this->connector1->getFire1Pin(), LOW);
+	}
+
+	if (button == this->connector1->getJoystickMapping()->getAutoFire1())
+	{
+		Serial.println("connector1 autoFire1 released");
+		autoFire1->Stop();
+		if(!con1Fire1Pressed)
+			digitalWrite(this->connector1->getFire1Pin(), LOW);
 	}
 
 	// connector2;
 	if (button == this->connector2->getJoystickMapping()->getFire1())
 	{
 		Serial.println("connector2 fire1 released");
-		digitalWrite(this->connector2->getFire1Pin(), LOW);
+		con2Fire1Pressed = false;
+		if(!autoFire2->getState())
+			digitalWrite(this->connector2->getFire1Pin(), LOW);
+	}
+
+	if (button == this->connector2->getJoystickMapping()->getAutoFire1())
+	{
+		Serial.println("connector2 autoFire1 released");
+		autoFire2->Stop();
+		if(!con2Fire1Pressed)
+			digitalWrite(this->connector2->getFire1Pin(), LOW);
 	}
 }
 
@@ -56,12 +86,28 @@ void JoystickListener::onButtonDown(uint8_t button)
 	{
 		Serial.println("connector1 fire1 pressed");
 		digitalWrite(this->connector1->getFire1Pin(), HIGH);
+		con1Fire1Pressed = true;
+	}
+
+	if (button == this->connector1->getJoystickMapping()->getAutoFire1())
+	{
+		Serial.println("connector1 autoFire1 pressed");
+		autoFire1->Start();
+		digitalWrite(this->connector1->getFire1Pin(), HIGH);
 	}
 
 	// connector2;
 	if (button == this->connector2->getJoystickMapping()->getFire1())
 	{
 		Serial.println("connector2 fire1 pressed");
+		digitalWrite(this->connector2->getFire1Pin(), HIGH);
+		con2Fire1Pressed = true;
+	}
+
+	if (button == this->connector2->getJoystickMapping()->getAutoFire1())
+	{
+		Serial.println("connector2 autoFire1 pressed");
+		autoFire2->Start();
 		digitalWrite(this->connector2->getFire1Pin(), HIGH);
 	}
 }
@@ -288,3 +334,51 @@ void JoystickListener::onDPadUp(uint8_t dpad)
 	}
 }
 
+void JoystickListener::Update()
+{
+	// tick autofire timers;
+	autoFire1->Update();
+	autoFire2->Update();
+}
+
+// static
+void JoystickListener::OnAutoFire1(void *context)
+{
+	JoystickListener *joystick = (JoystickListener *)context;
+	joystick->ProcessAutoFire1();
+}
+
+// static
+void JoystickListener::OnAutoFire2(void *context)
+{
+	JoystickListener *joystick = (JoystickListener *)context;
+	joystick->ProcessAutoFire2();
+}
+
+void JoystickListener::ProcessAutoFire1()
+{
+	if(autoFire1->getState())
+	{
+		Serial.println("connector 1 autofire1 cycle press");
+		digitalWrite(this->connector1->getFire1Pin(), HIGH);
+	}
+	else if (!con1Fire1Pressed)
+	{
+		Serial.println("connector 1 autofire1 cycle release");
+		digitalWrite(this->connector1->getFire1Pin(), LOW);
+	}
+}
+
+void JoystickListener::ProcessAutoFire2()
+{
+	if(autoFire2->getState())
+	{
+		Serial.println("connector 2 autofire1 cycle press");
+		digitalWrite(this->connector2->getFire1Pin(), HIGH);
+	}
+	else if(!con2Fire1Pressed)
+	{
+		Serial.println("connector 2 autofire1 cycle release");
+		digitalWrite(this->connector2->getFire1Pin(), LOW);
+	}
+}

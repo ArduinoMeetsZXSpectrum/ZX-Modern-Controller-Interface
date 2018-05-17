@@ -10,9 +10,11 @@
 using namespace ZX;
 
 // mappings O, P, Q, A, SPACE;
-KeyboardMapping keyboardMapping1 = KeyboardMapping(Keys::Q, Keys::A, Keys::O, Keys::P, Keys::SPACE);
-JoystickMapping joystickMapping = JoystickMapping(DPADEnum::DPAD_UP, DPADEnum::DPAD_UP_RIGHT, DPADEnum::DPAD_RIGHT, DPADEnum::DPAD_RIGHT_DOWN,
-		DPADEnum::DPAD_DOWN, DPADEnum::DPAD_DOWN_LEFT, DPADEnum::DPAD_LEFT, DPADEnum::DPAD_LEFT_UP, ButtonsEnum::BUTTON_1);
+KeyboardMapping keyboardMapping1 = KeyboardMapping(Keys::Q, Keys::A, Keys::O, Keys::P, Keys::SPACE, Keys::M);
+JoystickMapping joystickMapping = JoystickMapping(
+		ZX_DPAD_Enum::DPAD_UP, ZX_DPAD_Enum::DPAD_UP_RIGHT, ZX_DPAD_Enum::DPAD_RIGHT, ZX_DPAD_Enum::DPAD_RIGHT_DOWN,
+		ZX_DPAD_Enum::DPAD_DOWN, ZX_DPAD_Enum::DPAD_DOWN_LEFT, ZX_DPAD_Enum::DPAD_LEFT, ZX_DPAD_Enum::DPAD_LEFT_UP,
+		ZX_BUTTON_Enum::BUTTON_1, ZX_BUTTON_Enum::BUTTON_2);
 
 // sinclair connector digital pins;
 uint8_t upPin1 = 9;//11;
@@ -109,4 +111,7 @@ void setup()
 void loop()
 {
 	usb.Task();
+
+	keyboardListener.Update();
+	joystickListener.Update();
 }

@@ -15,6 +15,12 @@ UniversalJoystick::~UniversalJoystick()
 {
 }
 
+//------------------------------------------------------------
+//
+// Methods: HIDUniversal
+//
+//------------------------------------------------------------
+
 uint8_t UniversalJoystick::OnInitSuccessful()
 {
 	// Called by the HIDUniversal library on success
@@ -30,11 +36,6 @@ uint8_t UniversalJoystick::OnInitSuccessful()
 
 	return 0;
 };
-
-void UniversalJoystick::setListener(JoystickListener* listener)
-{
-	this->listener = listener;
-}
 
 void UniversalJoystick::ParseHIDData(USBHID *hid, bool is_rpt_id, uint8_t len, uint8_t *buf)
 {
@@ -53,6 +54,15 @@ void UniversalJoystick::ParseHIDData(USBHID *hid, bool is_rpt_id, uint8_t len, u
 		// fallback to universal driver;
 		Serial.println("fallback to universal driver");
 	}
+}
 
+//------------------------------------------------------------
+//
+// Methods
+//
+//------------------------------------------------------------
 
+void UniversalJoystick::setListener(JoystickListener* listener)
+{
+	this->listener = listener;
 }

@@ -18,9 +18,10 @@ class KeyboardMapping
 		uint8_t keyLeft;
 		uint8_t keyRight;
 		uint8_t keyFire1;
+		uint8_t keyAutoFire1;
 
 	public:
-		KeyboardMapping(uint8_t keyUp, uint8_t keyDown,	uint8_t keyLeft, uint8_t keyRight, uint8_t keyFire1);
+		KeyboardMapping(uint8_t keyUp, uint8_t keyDown,	uint8_t keyLeft, uint8_t keyRight, uint8_t keyFire1, uint8_t keyAutoFire1);
 		virtual ~KeyboardMapping();
 
 		uint8_t getKeyUp();
@@ -28,6 +29,7 @@ class KeyboardMapping
 		uint8_t getKeyLeft();
 		uint8_t getKeyRight();
 		uint8_t getKeyFire1();
+		uint8_t getKeyAutoFire1();
 };
 
 #endif /* KEYBOARDMAPPING_H_ */

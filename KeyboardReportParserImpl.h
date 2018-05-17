@@ -10,12 +10,17 @@
 
 #include <hidboot.h>
 #include "JoystickConnector.h"
+#include "AutoFire.h"
 
 class KeyboardReportParserImpl: public KeyboardReportParser
 {
 	private:
 		JoystickConnector *connector1;
 		JoystickConnector *connector2;
+		AutoFire *autoFire1;
+		AutoFire *autoFire2;
+		bool con1Fire1Pressed = false;
+		bool con2Fire1Pressed = false;
 
 	protected:
 		void OnControlKeysChanged(uint8_t before, uint8_t after);
@@ -26,6 +31,12 @@ class KeyboardReportParserImpl: public KeyboardReportParser
 	public:
 		KeyboardReportParserImpl(JoystickConnector *connector1, JoystickConnector *connector2);
 		virtual ~KeyboardReportParserImpl();
+
+		void Update();
+		static void OnAutoFire1(void *context);
+		static void OnAutoFire2(void *context);
+		void ProcessAutoFire1();
+		void ProcessAutoFire2();
 };
 
 #endif /* KEYBOARDREPORTPARSERIMPL_H_ */
