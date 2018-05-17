@@ -1,6 +1,6 @@
 # ZX-Modern-Controller-Interface
 
-This software is intended to be used with ZX Modern Controller Interface.
+This software is intended for the use with ZX Modern Controller Interface.
 https://www.facebook.com/ZXModernControllerInterface/
 
 Prerequisites:
