@@ -9,6 +9,5 @@ Prerequisites:
 Supported HID input devices:
 - Wired and wireless keyboards
 - Logitech Dual Action Gamepad
-- XBOX Controller for Windows (comming soon)
-- Nintendo WII Remote Controller (comming soon)
-- Nintendo WII U Gamepad Controller (comming soon)
+- XBOX Controller for Windows
+- XBOX One Wired PC Controller
