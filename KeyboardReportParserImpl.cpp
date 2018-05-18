@@ -42,6 +42,9 @@ void KeyboardReportParserImpl::OnKeyDown(uint8_t mod, uint8_t key)
 	PrintHex<uint8_t>(virtualCode, 0x80);
 	Serial.println("...");
 
+	// programming controls;
+	this->CheckControls(virtualCode);
+
 	// connector1;
 
 	if (virtualCode == this->connector1->getKeyboardMapping()->getKeyUp())
@@ -247,6 +250,15 @@ uint8_t KeyboardReportParserImpl::OemToVirtualKeyCode(uint8_t key)
 		return 0;
 	}
 	// functional keys
+	else if (VALUE_WITHIN(key, 0x3a, 0x45))
+	{
+		return (key - 0x3a + 0x70);
+	}
+	// ESCAPE
+	else if (key == 0x29)
+	{
+		return 0x1B;
+	}
 
 	// cursor keys
 	else if (VALUE_WITHIN(key, 0x4F, 0x52))
@@ -331,5 +343,74 @@ void KeyboardReportParserImpl::ProcessAutoFire2()
 		Serial.println("connector 2 autofire1 cycle release");
 		digitalWrite(this->connector2->getFire1Pin(), LOW);
 	}
+}
+
+void KeyboardReportParserImpl::CheckControls(uint8_t virtualKey)
+{
+	if(virtualKey == Keys::ESCAPE)
+	{
+		// exit programming mode;
+		DisableProgrammingMode();
+		Serial.println("Exitting programming mode");
+	}
+
+	if(virtualKey == Keys::F1)
+	{
+		// programming connector1 mapping;
+		DisableProgrammingMode();
+		Serial.println("Programming connector 1 keyboard mapping");
+		changeConnector1Mode = true;
+	}
+
+	if(virtualKey == Keys::F2)
+	{
+		// programming connector2 mapping;
+		DisableProgrammingMode();
+		Serial.println("Programming connector 2 keyboard mapping");
+		changeConnector2Mode = true;
+	}
+
+	if(changeConnector1Mode || changeConnector2Mode)
+	{
+		if(virtualKey == Keys::D1)
+		{
+			// mapping 1;
+			ChangeConnectorMapping(0);
+		}
+
+		if(virtualKey == Keys::D2)
+		{
+			// mapping 2;
+			ChangeConnectorMapping(1);
+		}
+
+		if(virtualKey == Keys::D3)
+		{
+			// mapping 3;
+			ChangeConnectorMapping(2);
+		}
+	}
+}
+
+void KeyboardReportParserImpl::ChangeConnectorMapping(uint8_t mapping)
+{
+	if(changeConnector1Mode)
+	{
+		Serial.println("Change connector 1 keyboard mapping");
+		connector1->ChangeActiveKeyboardMapping(mapping);
+	}
+	else if(changeConnector2Mode)
+	{
+		Serial.println("Change connector 2 keyboard mapping");
+		connector2->ChangeActiveKeyboardMapping(mapping);
+	}
+
+	DisableProgrammingMode();
+}
+
+void KeyboardReportParserImpl::DisableProgrammingMode()
+{
+	changeConnector1Mode = false;
+	changeConnector2Mode = false;
 }
 

@@ -9,8 +9,11 @@
 
 using namespace ZX;
 
-// mappings O, P, Q, A, SPACE;
+// mappings;
 KeyboardMapping keyboardMapping1 = KeyboardMapping(Keys::Q, Keys::A, Keys::O, Keys::P, Keys::SPACE, Keys::M);
+KeyboardMapping keyboardMapping2 = KeyboardMapping(Keys::Q, Keys::A, Keys::W, Keys::E, Keys::Z, Keys::X);
+KeyboardMapping keyboardMapping3 = KeyboardMapping(Keys::UP, Keys::DOWN, Keys::LEFT, Keys::RIGHT, Keys::SPACE, Keys::NumPad0);
+KeyboardMapping keyboardMappings[] = {keyboardMapping1, keyboardMapping2, keyboardMapping3};
 JoystickMapping joystickMapping = JoystickMapping(
 		ZX_DPAD_Enum::DPAD_UP, ZX_DPAD_Enum::DPAD_UP_RIGHT, ZX_DPAD_Enum::DPAD_RIGHT, ZX_DPAD_Enum::DPAD_RIGHT_DOWN,
 		ZX_DPAD_Enum::DPAD_DOWN, ZX_DPAD_Enum::DPAD_DOWN_LEFT, ZX_DPAD_Enum::DPAD_LEFT, ZX_DPAD_Enum::DPAD_LEFT_UP,
@@ -22,7 +25,7 @@ uint8_t downPin1 = 10;
 uint8_t leftPin1 = 11; //9;
 uint8_t rightPin1 = 12; //8;
 uint8_t fire1Pin1 = 13; //7;
-JoystickConnector connector1 = JoystickConnector(upPin1, downPin1, leftPin1, rightPin1, fire1Pin1, &keyboardMapping1, &joystickMapping);
+JoystickConnector connector1 = JoystickConnector(upPin1, downPin1, leftPin1, rightPin1, fire1Pin1, keyboardMappings, &joystickMapping);
 
 // kempston connector digital pins;
 uint8_t upPin2 = 4; //6;
@@ -30,7 +33,7 @@ uint8_t downPin2 = 5; //5;
 uint8_t leftPin2 = 6; //4;
 uint8_t rightPin2 = 7; //12;
 uint8_t fire1Pin2 = 8; //13;
-JoystickConnector connector2 = JoystickConnector(upPin2, downPin2, leftPin2, rightPin2, fire1Pin2, &keyboardMapping1, &joystickMapping);
+JoystickConnector connector2 = JoystickConnector(upPin2, downPin2, leftPin2, rightPin2, fire1Pin2, keyboardMappings, &joystickMapping);
 
 // LED
 uint8_t ledRedPin = 2;

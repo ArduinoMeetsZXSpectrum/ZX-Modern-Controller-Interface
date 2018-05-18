@@ -12,6 +12,7 @@ namespace ZX
 {
 	enum Keys
 	{
+		ESCAPE = 0x1B,
 		SPACE = 0x20,
 		LEFT = 0x25,
 		UP = 0x26,
